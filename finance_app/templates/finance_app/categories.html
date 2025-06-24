@@ -1,0 +1,50 @@
+{% extends 'finance_app/base.html' %}
+{% load static %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4>Categories</h4>
+                <a href="{% url 'add_category' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-lg"></i> Add Category
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Income Categories</h5>
+                        <ul class="list-group mb-4">
+                            {% for category in income_categories %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ category.name }}
+                                <span class="badge bg-primary rounded-pill">
+                                    {{ category.transaction_set.count }}
+                                </span>
+                            </li>
+                            {% empty %}
+                            <li class="list-group-item">No income categories yet.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Expense Categories</h5>
+                        <ul class="list-group">
+                            {% for category in expense_categories %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ category.name }}
+                                <span class="badge bg-primary rounded-pill">
+                                    {{ category.transaction_set.count }}
+                                </span>
+                            </li>
+                            {% empty %}
+                            <li class="list-group-item">No expense categories yet.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

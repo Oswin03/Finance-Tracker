@@ -1,0 +1,30 @@
+<!-- finance_app/templates/finance_app/expense_list.html -->
+{% extends "finance_app/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Your Expenses</h2>
+    <h4>Total Spent: <span class="text-danger">${{ total_expenses }}</span></h4>
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expense in expenses %}
+            <tr>
+                <td>{{ expense.date }}</td>
+                <td>{{ expense.category.name }}</td>
+                <td class="text-danger">-${{ expense.amount }}</td>
+                <td>{{ expense.description }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

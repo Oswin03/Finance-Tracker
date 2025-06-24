@@ -1,0 +1,128 @@
+{% extends 'finance_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4 shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Generate New Report</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'generate_report' %}">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="report_type" class="form-label">Report Type</label>
+                                <select class="form-select" id="report_type" name="report_type" required>
+                                    <option value="monthly">Monthly Summary</option>
+                                    <option value="yearly">Yearly Summary</option>
+                                    <option value="category">Category Breakdown</option>
+                                    <option value="transactions">Transaction List</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <label for="start_date" class="form-label">Start Date</label>
+                                <input type="date" class="form-control" id="start_date" name="start_date" required>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <label for="end_date" class="form-label">End Date</label>
+                                <input type="date" class="form-control" id="end_date" name="end_date" required>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <label for="format" class="form-label">Output Format</label>
+                                <select class="form-select" id="format" name="format" required>
+                                    <option value="html">Web View</option>
+                                    <option value="pdf">PDF Download</option>
+                                    <option value="csv">CSV Export</option>
+                                    <option value="json">JSON Data</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 text-center">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-file-earmark-bar-graph"></i> Generate Report
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card shadow">
+                <div class="card-header bg-secondary text-white">
+                    <h4 class="mb-0">Saved Reports</h4>
+                </div>
+                <div class="card-body">
+                    {% if saved_reports %}
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Created</th>
+                                    <th>Report Type</th>
+                                    <th>Date Range</th>
+                                    <th>Format</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for report in saved_reports %}
+                                <tr>
+                                    <td>{{ report.created_at|date:"M d, Y H:i" }}</td>
+                                    <td>{{ report.get_report_type_display }}</td>
+                                    <td>
+                                        {{ report.parameters.start_date|date:"Y-m-d" }} to 
+                                        {{ report.parameters.end_date|date:"Y-m-d" }}
+                                    </td>
+                                    <td>{{ report.parameters.format|upper }}</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'view_report' report.id %}" 
+                                               class="btn btn-outline-primary"
+                                               title="View Report">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="{% url 'download_report' report.id %}" 
+                                               class="btn btn-outline-success"
+                                               title="Download">
+                                                <i class="bi bi-download"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info text-center">
+                        <i class="bi bi-info-circle-fill"></i> No saved reports found.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Set default dates (last month)
+    const today = new Date();
+    const endDate = today.toISOString().split('T')[0];
+    
+    const firstDay = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const startDate = firstDay.toISOString().split('T')[0];
+    
+    document.getElementById('start_date').value = startDate;
+    document.getElementById('end_date').value = endDate;
+});
+</script>
+{% endblock %}

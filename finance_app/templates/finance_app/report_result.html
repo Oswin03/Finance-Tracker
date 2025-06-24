@@ -1,0 +1,98 @@
+{% extends 'finance_app/base.html' %}
+{% load static %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>{{ report_type }} Report: {{ start_date }} to {{ end_date }}</h4>
+                <div class="float-end">
+                    <a href="{% url 'generate_report' %}" class="btn btn-sm btn-outline-secondary">
+                        Back to Reports
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if report_type == 'Monthly' %}
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Month</th>
+                                <th class="text-success">Income</th>
+                                <th class="text-danger">Expenses</th>
+                                <th>Net</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for month, row in data.iterrows %}
+                            <tr>
+                                <td>{{ month }}</td>
+                                <td class="text-success">${{ row.True|default:0|floatformat:2 }}</td>
+                                <td class="text-danger">${{ row.False|default:0|floatformat:2 }}</td>
+                                <td class="{% if row.True|default:0|subtract:row.False|default:0 > 0 %}text-success{% else %}text-danger{% endif %}">
+                                    ${{ row.True|default:0|subtract:row.False|default:0|floatformat:2 }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+                
+                <div class="mt-4">
+                    <canvas id="reportChart" height="100"></canvas>
+                </div>
+                
+                <div class="mt-4">
+                    <a href="#" class="btn btn-primary" onclick="window.print()">
+                        Print Report
+                    </a>
+                    <a href="?export=pdf" class="btn btn-outline-primary ms-2">
+                        Download PDF
+                    </a>
+                    <a href="?export=csv" class="btn btn-outline-secondary ms-2">
+                        Download CSV
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    const ctx = document.getElementById('reportChart').getContext('2d');
+    // Chart.js configuration based on report data
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: [{% for month, row in data.iterrows %}'{{ month }}',{% endfor %}],
+            datasets: [
+                {
+                    label: 'Income',
+                    data: [{% for month, row in data.iterrows %}{{ row.True|default:0 }},{% endfor %}],
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Expenses',
+                    data: [{% for month, row in data.iterrows %}{{ row.False|default:0 }},{% endfor %}],
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

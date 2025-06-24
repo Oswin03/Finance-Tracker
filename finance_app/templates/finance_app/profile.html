@@ -1,0 +1,82 @@
+{% extends 'finance_app/base.html' %}
+{% load static %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4>User Profile</h4>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5>Account Information</h5>
+                        <p><strong>Username:</strong> {{ user.username }}</p>
+                        <p><strong>Email:</strong> {{ user.email }}</p>
+                        <p><strong>Joined:</strong> {{ user.date_joined|date:"F j, Y" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Statistics</h5>
+                        <p><strong>Total Transactions:</strong> {{ user.transactions.count }}</p>
+                        <p><strong>Categories Created:</strong> {{ user.categories.count }}</p>
+                        <p><strong>Budgets Created:</strong> {{ user.budgets.count }}</p>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Update Profile</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       value="{{ user.email }}" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Email</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header bg-warning">
+                        <h5>Danger Zone</h5>
+                    </div>
+                    <div class="card-body">
+                        <a href="{% url 'password_change' %}" class="btn btn-outline-warning me-2">
+                            Change Password
+                        </a>
+                        <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            Delete Account
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Account Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Account Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently lost.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="post" action="{% url 'delete_account' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete My Account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

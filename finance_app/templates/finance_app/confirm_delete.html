@@ -1,0 +1,25 @@
+{% extends 'finance_app/base.html' %}
+{% load static %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h4>Confirm Deletion</h4>
+            </div>
+            <div class="card-body">
+                <p>Are you sure you want to delete this {{ object|verbose_name }}?</p>
+                <p><strong>{{ object }}</strong></p>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                        <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

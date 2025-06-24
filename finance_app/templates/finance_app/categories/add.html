@@ -1,0 +1,32 @@
+{% extends "finance_app/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Add New Category</h2>
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            {{ form.name.label_tag }}
+            {{ form.name }}
+            {% if form.name.errors %}
+                <div class="text-danger">{{ form.name.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="mb-3 form-check">
+            {{ form.is_income }}
+            <label class="form-check-label" for="{{ form.is_income.id_for_label }}">
+                Income Category?
+            </label>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-save"></i> Save Category
+        </button>
+        <a href="{% url 'category_list' %}" class="btn btn-secondary">
+            <i class="bi bi-x-circle"></i> Cancel
+        </a>
+    </form>
+</div>
+{% endblock %}
