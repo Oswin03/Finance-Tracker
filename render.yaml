@@ -2,8 +2,11 @@ services:
   - type: web
     name: finance-tracker
     env: python
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn finance_project.wsgi"
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn finance_tracker.wsgi:application
+    pythonVersion: 3.10.13  # 👈🏽 Use a stable Python version
     envVars:
       - key: DJANGO_SETTINGS_MODULE
-        value: finance_project.settings
+        value: finance_tracker.settings
+      - key: PYTHON_VERSION
+        value: 3.10.13
